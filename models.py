@@ -23,3 +23,5 @@ class SensorData(gj.Document):
     temperature = FloatField()
     humidity = FloatField()
     light = IntField()
+    moisture = IntField()
+    sensor_uuid = StringField()
