@@ -2,26 +2,64 @@ import React from "react";
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 import background from "./assets/background.jpg";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@material-ui/core";
+import { Chart } from "react-google-charts";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+  },
+  container: {
+    backgroundSize: "cover",
+    backgroundImage: `url(${background})`,
+    height: "100%",
+  },
+  upperPanelContainer: {
+    textAlign: "center",
+  },
+  header: {
+    margin: "0 0 10px 0",
+    color: "white",
+  },
+  tableHeader: {
+    backgroundColor: "grey",
+    marginTop: "15px",
+    marginLeft: "15px",
+    marginRight: "15px",
+  },
+  tableContainer: {
+    marginTop: "15px",
+    marginRight: "15px",
   },
 });
 
 export default function App() {
   const classes = useStyles();
   const [data, setData] = useState(null);
+  const [visilizationData, setVisilizationData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  function dataHandler(data) {
+    return data.map((item) => {
+      return [
+        new Date(item.collect_time),
+        item.temperature,
+        item.humidity,
+        item.moisture,
+        item.light,
+      ];
+    });
+  }
 
   function fetchDataHandler() {
     // setError(null);
@@ -31,6 +69,8 @@ export default function App() {
       })
       .then((data) => {
         setData(data);
+        console.log(dataHandler(data));
+        setVisilizationData(dataHandler(data));
         setIsLoading(false);
       });
   }
@@ -38,39 +78,18 @@ export default function App() {
   useEffect(fetchDataHandler, []);
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${background})`,
-        bottom: 0,
-        height: "100%",
-        margin: 0,
-        // backgroundColor: "red",
-      }}
-    >
-      <div style={{}}>
-        <h1 style={{}}>Table</h1>
-        <Button variant="primary" size="lg" onClick={fetchDataHandler}>
-          Get Data
+    <div className={classes.container}>
+      <div className={classes.upperPanelContainer}>
+        <h1 className={classes.header}>Planter Helper Dashboard</h1>
+        <Button variant="outline-primary" size="lg" onClick={fetchDataHandler}>
+          Refresh
         </Button>
       </div>
 
       {/* table */}
-      <div
-        style={{
-          backgroundColor: "grey",
-          marginTop: "15px",
-          marginLeft: "15px",
-          marginRight: "15px",
-        }}
-      >
+      <div className={classes.tableHeader}>
         {data && (
-          <TableContainer
-            component={Paper}
-            style={{
-              marginTop: "15px",
-              marginRight: "15px",
-            }}
-          >
+          <TableContainer component={Paper} className={classes.tableContainer}>
             <Table className={classes.table} aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -85,7 +104,7 @@ export default function App() {
                 {data.map((row) => (
                   <TableRow key={row._id}>
                     <TableCell component="th" scope="row">
-                      {row.collect_time}
+                      {new Date(row.collect_time).toLocaleString()}
                     </TableCell>
                     <TableCell align="right">{row.temperature}</TableCell>
                     <TableCell align="right">{row.humidity}</TableCell>
