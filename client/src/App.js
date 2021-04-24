@@ -116,6 +116,25 @@ export default function App() {
             </Table>
           </TableContainer>
         )}
+
+        {visilizationData && (
+          <Chart
+            width={"100%"}
+            height={300}
+            chartType="LineChart"
+            loader={<div>Loading Chart</div>}
+            data={[
+              ["Date/time", "Temperature", "Humidity", "Moisture", "Light"],
+              ...visilizationData,
+            ]}
+            options={{
+              title: "Value change over time",
+              hAxis: { title: "Time" },
+              vAxis: { title: "Value" },
+              bubble: { textStyle: { fontSize: 11 } },
+            }}
+          />
+        )}
       </div>
     </div>
   );
