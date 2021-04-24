@@ -25,10 +25,6 @@ POST /api/sensor-data
 The backend is going to take sensor data and store with timestamp
 '''
 
-client = pymongo.MongoClient('localhost', 27017)
-db = client.db1
-collection = db['sensor_data']
-
 
 @app.route('/api/sensor-data', methods=['POST'])
 def post_sensor_data():
@@ -41,12 +37,7 @@ def post_sensor_data():
 
 @app.route('/')
 def get_all():
-    documents = collection.find()
-    response = []
-    for document in documents:
-        document['_id'] = str(document['_id'])
-        response.append(document)
-    return json.dumps(response)
+    return SensorData.objects().all().to_json(), 200
 
 
 if __name__ == "__main__":
